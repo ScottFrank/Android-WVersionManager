@@ -1,9 +1,11 @@
 package com.winsontan520.wversionmanager.library;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 
+import android.os.Environment;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
@@ -350,18 +352,45 @@ public class WVersionManager implements IWVersionManager {
 		}
 	}
 
-	private void updateNow(String url) {
-		if (url != null) {
-			try {
-				Uri uri = Uri.parse(url);
-				Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-				activity.startActivity(intent);
-			} catch (Exception e) {
-				Log.e(TAG, "is update url correct?" + e);
-			}
-		}
+    private void updateNow(String apkurl) {
+        //NOTE:
+        //These changes came from: http://stackoverflow.com/questions/4967669/android-install-apk-programmatically
+        //  Did this so that the file could be downloaded and installed without kicking off the internet application
+        //  or having to manually start the installation afterwards
 
-	}
+        if (apkurl != null) {
+            try {
+                URL url = new URL(apkurl);
+                HttpURLConnection c = (HttpURLConnection) url.openConnection();
+                c.setRequestMethod("GET");
+                //c.setDoOutput(true);
+                c.connect();
+
+                String PATH = Environment.getExternalStorageDirectory() + "/Download/";
+                File file = new File(PATH);
+                file.mkdirs();
+                File outputFile = new File(file, "app.apk");
+                FileOutputStream fos = new FileOutputStream(outputFile);
+
+                InputStream is = c.getInputStream();
+
+                byte[] buffer = new byte[1024];
+                int len1 = 0;
+                while ((len1 = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len1);
+                }
+                fos.close();
+                is.close();
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/Download/" + "app.apk")), "application/vnd.android.package-archive");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "is update url correct?" + e);
+            }
+        }
+    }
 
 	private void remindMeLater(int reminderTimer) {
 		Calendar c = Calendar.getInstance();
