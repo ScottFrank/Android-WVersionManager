@@ -162,3 +162,7 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+# Intellij Workspace
+library/.idea/workspace.xml
+
