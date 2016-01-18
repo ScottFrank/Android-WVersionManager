@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.Calendar;
 
 import android.os.Environment;
+import android.widget.Button;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
@@ -118,9 +119,20 @@ public class WVersionManager implements IWVersionManager {
 		}
 
 		builder.setCancelable(isDialogCancelable());
+		final AlertDialog dialog = builder.create();
 
-		AlertDialog dialog = builder.create();
-		if (activity != null && !activity.isFinishing()) {
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+
+                Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                if (button != null) {
+                    button.setTextColor(0xFF008000);
+                }
+            }
+        });
+
+        if (activity != null && !activity.isFinishing()) {
 			dialog.show();
 		}
 	}
