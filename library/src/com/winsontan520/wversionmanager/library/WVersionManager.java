@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 
+import android.graphics.Typeface;
 import android.os.Environment;
 import android.widget.Button;
 import org.apache.http.HttpResponse;
@@ -128,6 +129,7 @@ public class WVersionManager implements IWVersionManager {
                 Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
                 if (button != null) {
                     button.setTextColor(0xFF008000);
+                    button.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
                 }
             }
         });
